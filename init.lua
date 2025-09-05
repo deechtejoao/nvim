@@ -60,6 +60,17 @@ require("lazy").setup({
     end,
   },
 
+  -- Markdown previewer
+  {
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    build = "cd app && yarn install",
+    init = function()
+      vim.g.mkdp_filetypes = { "markdown" }
+    end,
+    ft = { "markdown" },
+  },
+
 
   {
     "ngtuonghy/live-server-nvim",
@@ -228,12 +239,12 @@ local servers = {
   },
 }
 
--- Updated setup for mason-lspconfig v2.0.0+
 require("mason-lspconfig").setup({
   ensure_installed = {
-    "lua_ls",        -- Lua (for Neovim config)
+    "lua_ls",        -- Lua
     "rust_analyzer", -- Rust
     "clangd",        -- C/C++
+    "phpactor",      -- PHP
   },
   handlers = {
     -- Default handler for installed servers
@@ -342,10 +353,32 @@ require("nvim-tree").setup({
   end,
 })
 
+-- Open current file in a new horizontal split
+vim.keymap.set("n", "<leader>sh", ":split<CR>:edit ", { desc = "Open file in horizontal split" })
+
+-- Open current file in a new vertical split
+vim.keymap.set("n", "<leader>sv", ":vsplit<CR>:edit ", { desc = "Open file in vertical split" })
+
+-- Open file in a new tab
+vim.keymap.set("n", "<leader>st", ":tabedit ", { desc = "Open file in new tab" })
+
+-- Buffer navigation
+vim.keymap.set('n', '<Tab>', ':bnext<CR>', { desc = 'Next buffer' })
+vim.keymap.set('n', '<S-Tab>', ':bprev<CR>', { desc = 'Previous buffer' })
+
+-- Alternative buffer navigation (Alt + h/l)
+vim.keymap.set('n', '<M-h>', ':bprev<CR>', { desc = 'Previous buffer' })
+vim.keymap.set('n', '<M-l>', ':bnext<CR>', { desc = 'Next buffer' })
+
+-- Switch to alternate buffer
+vim.keymap.set('n', '<C-6>', '<C-^>', { desc = 'Switch to alternate buffer' })
+vim.keymap.set('n', '<leader>bb', '<C-^>', { desc = 'Switch to alternate buffer' })
+
+
 
 -- Treesitter setup
 require("nvim-treesitter.configs").setup({
-  ensure_installed = { "c", "cpp", "go", "lua", "python", "rust", "tsx", "javascript", "typescript", "vimdoc", "vim" },
+  ensure_installed = { "c", "cpp", "java", "go", "lua", "python", "rust", "tsx", "javascript", "typescript", "vimdoc", "vim", "html", "css", "json", "markdown", "markdown_inline" },
   auto_install = false,
   highlight = { enable = true },
   indent = { enable = true },
@@ -474,6 +507,9 @@ vim.keymap.set("n", "<leader>ls", ":LiveServerStart<CR>", { desc = "Start live s
 vim.keymap.set("n", "<leader>lx", ":LiveServerStop<CR>", { desc = "Stop live server" })
 vim.keymap.set("n", "<leader>lt", function() require("live-server-nvim").toggle() end, { desc = "Toggle live server" })
 
+
+
+vim.keymap.set("n", "<leader>mk", ":MarkdownPreviewToggle<CR>", { desc = "Start markdown live server" })
 -- Auto commands
 vim.api.nvim_create_autocmd("TextYankPost", {
   desc = "Highlight when yanking text",
